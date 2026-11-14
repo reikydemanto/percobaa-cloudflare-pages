@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Situs percobaan online</title>
+<meta name="description" content="Halaman percobaan untuk menguji deploy di Cloudflare Pages.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef3f8;
+    --ink: #10243e;
+    --muted: #4d6179;
+    --line: #c9d6e3;
+    --panel: #ffffff;
+    --accent: #f38020;
+    --ok: #1f8a5b;
+    --font: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  main { max-width: 46rem; margin: 0 auto; padding: 4.5rem 1.5rem 5rem; }
+  h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(2.6rem, 9vw, 4.6rem);
+    line-height: 1.02;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .lead { max-width: 34rem; margin: 0 0 3rem; color: var(--muted); font-size: 1.2rem; }
+  .status {
+    display: inline-flex; align-items: center; gap: .6rem;
+    margin-bottom: 1.6rem; padding: .35rem .9rem .35rem .75rem;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: var(--panel); font-weight: 600; font-size: .95rem;
+  }
+  .dot { width: .65rem; height: .65rem; border-radius: 50%; background: var(--ok); animation: pulse 2.4s ease-out infinite; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(31,138,91,.45); }
+    70%, 100% { box-shadow: 0 0 0 .7rem rgba(31,138,91,0); }
+  }
+  .panel {
+    margin: 0 0 3.5rem; padding: .4rem 1.5rem;
+    background: var(--panel); border: 1px solid var(--line); border-left: 6px solid var(--accent);
+    border-radius: 4px;
+  }
+  .row { display: flex; justify-content: space-between; gap: 1.5rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row dt { color: var(--muted); }
+  .row dd { margin: 0; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+  h2 { margin: 0 0 1.2rem; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; }
+  ol { margin: 0 0 3.5rem; padding-left: 1.4rem; }
+  li { margin-bottom: 1rem; padding-left: .4rem; }
+  li strong { font-weight: 600; }
+  code {
+    padding: .1rem .4rem; background: #dfe8f1; border-radius: 3px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em;
+  }
+  button {
+    font: inherit; font-weight: 600; color: #fff; background: var(--ink);
+    border: 0; border-radius: 4px; padding: .8rem 1.4rem; cursor: pointer;
+  }
+  button:hover { background: #1b3a63; }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  #hasil { margin-left: 1rem; color: var(--muted); }
+  footer { margin-top: 4rem; color: var(--muted); font-size: .95rem; }
+  @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+  @media (max-width: 30rem) { .row { flex-direction: column; gap: .15rem; } .row dd { text-align: left; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="status"><span class="dot" aria-hidden="true"></span>Online dan berjalan</div>
+  <h1>Situs percobaan Anda sudah tayang.</h1>
+  <p class="lead">Halaman ini berhasil diunggah. Data di bawah dibaca langsung dari browser Anda saat halaman dimuat.</p>
+
+  <dl class="panel" aria-label="Info koneksi">
+    <div class="row"><dt>Alamat</dt><dd id="alamat">…</dd></div>
+    <div class="row"><dt>Koneksi aman (HTTPS)</dt><dd id="https">…</dd></div>
+    <div class="row"><dt>Waktu dimuat</dt><dd id="waktu">…</dd></div>
+    <div class="row"><dt>Lama memuat halaman</dt><dd id="durasi">…</dd></div>
+  </dl>
+
+  <h2>Langkah berikutnya</h2>
+  <ol>
+    <li><strong>Ubah isinya.</strong> Buka <code>index.html</code>, ganti teks dan warna, lalu unggah ulang.</li>
+    <li><strong>Pasang domain sendiri.</strong> Di Cloudflare Pages, buka tab Custom domains dan tambahkan domain Anda.</li>
+    <li><strong>Pindah ke Next.js dengan Git.</strong> Hubungkan repo agar setiap <code>git push</code> otomatis tayang.</li>
+  </ol>
+
+  <button type="button" id="uji">Uji sekarang</button><span id="hasil" role="status"></span>
+
+  <footer>Dibuat sebagai file HTML tunggal, tanpa build, tanpa server.</footer>
+</main>
+<script>
+  (function () {
+    var $ = function (id) { return document.getElementById(id); };
+    $("alamat").textContent = location.host || "(file lokal)";
+    $("https").textContent = location.protocol === "https:" ? "Ya" : "Tidak (buka lewat alamat Cloudflare)";
+    $("waktu").textContent = new Date().toLocaleString("id-ID", { dateStyle: "long", timeStyle: "medium" });
+
+    window.addEventListener("load", function () {
+      try {
+        var nav = performance.getEntriesByType("navigation")[0];
+        $("durasi").textContent = nav ? Math.round(nav.duration) + " ms" : "tidak tersedia";
+      } catch (e) { $("durasi").textContent = "tidak tersedia"; }
+    });
+
+    $("uji").addEventListener("click", function () {
+      var mulai = performance.now();
+      fetch(location.href, { cache: "no-store" })
+        .then(function () {
+          $("hasil").textContent = "Halaman diambil ulang dalam " + Math.round(performance.now() - mulai) + " ms.";
+        })
+        .catch(function () {
+          $("hasil").textContent = "Gagal mengambil ulang. Coba lewat alamat Cloudflare Anda, bukan file lokal.";
+        });
+    });
+  })();
+</script>
+</body>
+</html>
